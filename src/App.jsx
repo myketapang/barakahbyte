@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
-  Heart, MapPin, Camera, Plus, Clock, CheckCircle, TrendingUp,
-  Phone, X, Trophy, Sparkles, ChevronLeft, Star, Flame,
-  Users, Leaf, Upload, AlertCircle, Moon, Wind
+  Heart, MapPin, Camera, Plus, Clock,
+  Phone, X, Trophy, ChevronLeft, Star, Flame,
+  Users, Leaf, Upload, AlertCircle, Moon, Loader
 } from 'lucide-react'
 import {
   uploadProofImage,
@@ -511,7 +511,7 @@ export default function App() {
                 <p className="text-xs font-bold text-white/80">Tonight's Rescue Progress</p>
                 <p className="text-[10px] text-white/30 mt-0.5">Goal: zero food waste at closing</p>
               </div>
-              <TrendingUp className="w-4 h-4 text-barakah-400" />
+              <Leaf className="w-4 h-4 text-barakah-400" />
             </div>
             <div className="w-full bg-white/5 rounded-full h-2 overflow-hidden">
               <div
@@ -590,7 +590,7 @@ export default function App() {
           {/* Why sedekah box */}
           <div className="bg-barakah-950/60 border border-barakah-800/40 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-4 h-4 text-barakah-400" />
+              <Star className="w-4 h-4 text-barakah-400" />
               <span className="text-xs font-bold text-barakah-400 uppercase tracking-wider">Why this matters</span>
             </div>
             <p className="text-sm text-white/60 leading-relaxed">
@@ -771,7 +771,7 @@ export default function App() {
 
           {/* Tip */}
           <div className="bg-blue-950/40 border border-blue-800/30 rounded-xl p-3 flex gap-2.5">
-            <Sparkles className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+            <Star className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
             <p className="text-[11px] text-blue-300/70">Best photos: hand-off moment, mosque distribution, or happy recipients. Blurry photos are okay!</p>
           </div>
 
@@ -782,7 +782,7 @@ export default function App() {
           >
             {submitting ? (
               <span className="flex items-center justify-center gap-2">
-                <Wind className="w-4 h-4 animate-spin" /> Verifying...
+                <Loader className="w-4 h-4 animate-spin" /> Verifying...
               </span>
             ) : 'Submit Proof & Earn 50 pts'}
           </button>
