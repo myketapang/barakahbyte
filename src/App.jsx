@@ -21,7 +21,7 @@ const MOCK_LISTINGS = [
     location: 'Bazaar TTDI',
     item: 'Murtabak Daging Kambing',
     quantity: 12,
-    posted_at: '19:45',
+    created_at: new Date().toISOString(),
     status: 'available',
     image_url: 'https://images.unsplash.com/photo-1589118949245-7d38baf380d6?auto=format&fit=crop&w=400&q=80',
     category: 'food',
@@ -33,7 +33,7 @@ const MOCK_LISTINGS = [
     location: 'Bazaar Kampung Baru',
     item: 'Air Katira & Bandung',
     quantity: 25,
-    posted_at: '20:10',
+    created_at: new Date().toISOString(),
     status: 'available',
     image_url: 'https://images.unsplash.com/photo-1544145945-f904253db0ad?auto=format&fit=crop&w=400&q=80',
     category: 'drinks',
@@ -45,7 +45,7 @@ const MOCK_LISTINGS = [
     location: 'Bazaar Masjid India',
     item: 'Kurma Ajwa Premium',
     quantity: 5,
-    posted_at: '20:30',
+    created_at: new Date().toISOString(),
     status: 'available',
     image_url: 'https://images.unsplash.com/photo-1590080877897-f00f6cb15e24?auto=format&fit=crop&w=400&q=80',
     category: 'food',
@@ -54,6 +54,16 @@ const MOCK_LISTINGS = [
 ]
 
 const CATEGORIES = ['All', 'Food', 'Drinks', 'Desserts', 'Snacks']
+
+// ─── Helper: format time from created_at ─────────────────────────────────────
+function formatTime(isoString) {
+  if (!isoString) return '—'
+  try {
+    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  } catch {
+    return '—'
+  }
+}
 
 // ─── Confetti ─────────────────────────────────────────────────────────────────
 function Confetti({ active }) {
@@ -208,7 +218,7 @@ function ListingCard({ item, onView, onUpload }) {
           <Badge status={item.status} quantity={item.quantity} />
           <span className="text-[10px] text-white/30 flex items-center gap-1">
             <Clock className="w-3 h-3" />
-            {item.posted_at || '—'}
+            {formatTime(item.created_at)}
           </span>
         </div>
 
@@ -312,25 +322,27 @@ export default function App() {
       if (url) imageUrl = url
     }
 
+    // ✅ NO id field — Supabase auto-generates it
+    // ✅ NO posted_at — we use created_at from Supabase instead
     const newItem = {
-      id: Date.now(),
       seller: fd.get('seller') || 'Anonymous Vendor',
       location: fd.get('location') || 'Your Bazaar',
       phone: fd.get('phone') || '',
       item: fd.get('item'),
       quantity: parseInt(fd.get('quantity')),
-      posted_at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       status: 'available',
       image_url: imageUrl,
       category: fd.get('category') || 'food',
     }
 
-    // Try inserting to Supabase
     const inserted = await insertListing(newItem)
+
     if (inserted) {
+      // ✅ Use the real row returned from Supabase (has id + created_at)
       setListings(prev => [inserted, ...prev])
     } else {
-      setListings(prev => [newItem, ...prev])
+      // Fallback: show locally even if Supabase failed
+      setListings(prev => [{ ...newItem, id: Date.now(), created_at: new Date().toISOString() }, ...prev])
     }
 
     setNotice({ type: 'success', icon: '✅', title: 'Listed!', body: `"${newItem.item}" is now live for rescue.` })
@@ -585,7 +597,7 @@ export default function App() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Badge status={selected.status} quantity={selected.quantity} />
-              <span className="text-[10px] text-white/30">{selected.posted_at}</span>
+              <span className="text-[10px] text-white/30">{formatTime(selected.created_at)}</span>
             </div>
             <h2 className="font-display text-2xl font-black text-white">{selected.item}</h2>
             <p className="text-white/50 text-sm mt-1">{selected.seller} · {selected.location}</p>
